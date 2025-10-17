@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
     @Autowired
-    private ProductService productionService;
+    private ProductService productService;
 
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable Integer productId){
-        Product product = productionService.getProductById(productId);
+        Product product = productService.getProductById(productId);
 
         if (product != null){
             return ResponseEntity.status(HttpStatus.OK).body(product);
