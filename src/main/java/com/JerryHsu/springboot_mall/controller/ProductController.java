@@ -1,13 +1,13 @@
 package com.JerryHsu.springboot_mall.controller;
 
+import com.JerryHsu.springboot_mall.dao.dto.ProductRequest;
 import com.JerryHsu.springboot_mall.model.Product;
 import com.JerryHsu.springboot_mall.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ProductController {
@@ -24,6 +24,17 @@ public class ProductController {
         }else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+    @PostMapping("/products")
+    public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest){
 
+        //將productRequest的資料，insert到table內，並回傳新增的那一筆資料的key value
+        Integer productId = productService.createProduct(productRequest);
+
+        //透過key value在反查一次該key value對應的資料
+        Product product = productService.getProductById(productId);
+
+        //會傳給前端有新增厚查詢的結果
+        return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 }
