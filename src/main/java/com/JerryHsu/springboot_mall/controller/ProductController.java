@@ -21,16 +21,22 @@ public class ProductController {
 
     @GetMapping("/products")//對於RESTful API的Mapping說明，可以再參考4-11 / 4-7@RequestParam
     public ResponseEntity<List<Product>> getProducts(
+            //查詢條件 Filtering
             @RequestParam(required = false) ProductCategory category,
-            @RequestParam(required = false) String search
-            ){
+            @RequestParam(required = false) String search,
+            //排序條件 Sorting
+            @RequestParam(defaultValue = "created_date") String orderBy, //可參考4-7
+            @RequestParam(defaultValue = "desc") String sort
+    ){
         ProductQueryParms productQueryParms = new ProductQueryParms();
         productQueryParms.setProductCategory(category);
         productQueryParms.setSearch(search);
+        productQueryParms.setOrderBy(orderBy);
+        productQueryParms.setSort(sort);
 
-       List<Product> productsList =  productService.getProducts(productQueryParms);
+        List<Product> productsList =  productService.getProducts(productQueryParms);
 
-       return ResponseEntity.status(HttpStatus.OK).body(productsList);
+        return ResponseEntity.status(HttpStatus.OK).body(productsList);
 
     }
 

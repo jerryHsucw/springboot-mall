@@ -47,13 +47,14 @@ public class ProductDaoImpl implements ProductDao  {
             //而不會因為未來 enum 改寫 toString() 而變成中文或其他描述。
             //name() >> 會呈現英文
             //toString >> 如果enums有override to_string 則會是中文
-
         }
 
         if (productQueryParms.getSearch()  != null){
             sql = sql + " AND product_name like :search";
             map.put("search", "%"+productQueryParms.getSearch()+"%"); //like 的% 只能放在map內
         }
+        //用串的方式 指定排序功能，因為controller有default的關係，所以可以直接串
+        sql = sql + " ORDER BY " + productQueryParms.getOrderBy() + " " + productQueryParms.getSort();
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
@@ -96,25 +97,25 @@ public class ProductDaoImpl implements ProductDao  {
 
     public Integer createProduct(ProductRequest productRequest){
         String sql  =   "INSERT INTO mall.tproduct (" +
-                        "product_name, " +
-                        "category, " +
-                        "image_url, " +
-                        "price, " +
-                        "stock, " +
-                        "description, " +
-                        "created_date, " +
-                        "last_modified_date" +
-                        ") " +
-                        "VALUES (" +
-                        ":productName, " +
-                        ":category, " +
-                        ":imageUrl, " +
-                        ":price, " +
-                        ":stock, " +
-                        ":description, " +
-                        ":createdDate, " +
-                        ":lastModifiedDate" +
-                        ")";
+                "product_name, " +
+                "category, " +
+                "image_url, " +
+                "price, " +
+                "stock, " +
+                "description, " +
+                "created_date, " +
+                "last_modified_date" +
+                ") " +
+                "VALUES (" +
+                ":productName, " +
+                ":category, " +
+                ":imageUrl, " +
+                ":price, " +
+                ":stock, " +
+                ":description, " +
+                ":createdDate, " +
+                ":lastModifiedDate" +
+                ")";
 
         Map<String, Object> map = new HashMap<>();
         map.put("productName",productRequest.getProductName());
@@ -141,14 +142,14 @@ public class ProductDaoImpl implements ProductDao  {
     public void updateProduct(Integer productId, ProductRequest productRequest) {
 
         String sql = "UPDATE mall.tproduct set " +
-                     "  product_name = :productName," +
-                     "  category     = :category," +
-                     "  image_url    = :imageUrl," +
-                     "  price   = :price," +
-                     "  stock   = :stock," +
-                     "  description  = :description," +
-                     "  last_modified_date = :lastModifiedDate" +
-                     "  WHERE product_id = :productId";
+                "  product_name = :productName," +
+                "  category     = :category," +
+                "  image_url    = :imageUrl," +
+                "  price   = :price," +
+                "  stock   = :stock," +
+                "  description  = :description," +
+                "  last_modified_date = :lastModifiedDate" +
+                "  WHERE product_id = :productId";
         Map<String, Object> map = new HashMap<>();
 
         map.put("productId",productId);
@@ -164,7 +165,7 @@ public class ProductDaoImpl implements ProductDao  {
 
         namedParameterJdbcTemplate.update(sql,map);
 
-        }
+    }
 
     @Override
     public void deleteProduct(Integer productId) {
