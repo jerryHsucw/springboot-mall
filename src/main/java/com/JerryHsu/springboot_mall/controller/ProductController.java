@@ -1,5 +1,7 @@
 package com.JerryHsu.springboot_mall.controller;
 
+import com.JerryHsu.springboot_mall.constant.ProductCategory;
+import com.JerryHsu.springboot_mall.dao.dto.ProductQueryParms;
 import com.JerryHsu.springboot_mall.dao.dto.ProductRequest;
 import com.JerryHsu.springboot_mall.model.Product;
 import com.JerryHsu.springboot_mall.service.ProductService;
@@ -17,10 +19,16 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/products")//對於RESTful API的Mapping說明，可以再參考4-11
-    public ResponseEntity<List<Product>> getProducts(){
+    @GetMapping("/products")//對於RESTful API的Mapping說明，可以再參考4-11 / 4-7@RequestParam
+    public ResponseEntity<List<Product>> getProducts(
+            @RequestParam(required = false) ProductCategory category,
+            @RequestParam(required = false) String search
+            ){
+        ProductQueryParms productQueryParms = new ProductQueryParms();
+        productQueryParms.setProductCategory(category);
+        productQueryParms.setSearch(search);
 
-       List<Product> productsList =  productService.getProducts();
+       List<Product> productsList =  productService.getProducts(productQueryParms);
 
        return ResponseEntity.status(HttpStatus.OK).body(productsList);
 

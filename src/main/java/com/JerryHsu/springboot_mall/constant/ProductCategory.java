@@ -6,5 +6,6 @@ public enum ProductCategory {
     CAR,
     Fruit,
     E_BOOK,
+    BOOK,
     UNKNOW
 }

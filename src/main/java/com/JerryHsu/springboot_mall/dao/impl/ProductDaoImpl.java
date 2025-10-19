@@ -1,6 +1,8 @@
 package com.JerryHsu.springboot_mall.dao.impl;
 
+import com.JerryHsu.springboot_mall.constant.ProductCategory;
 import com.JerryHsu.springboot_mall.dao.ProductDao;
+import com.JerryHsu.springboot_mall.dao.dto.ProductQueryParms;
 import com.JerryHsu.springboot_mall.dao.dto.ProductRequest;
 import com.JerryHsu.springboot_mall.model.Product;
 import com.JerryHsu.springboot_mall.rowmapper.ProductRowMapper;
@@ -23,7 +25,7 @@ public class ProductDaoImpl implements ProductDao  {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts() {
+    public List<Product> getProducts(ProductQueryParms productQueryParms) {
         String sql = "select t.product_id , " +
                 "t.product_name , " +
                 "t.category , " +
@@ -33,9 +35,26 @@ public class ProductDaoImpl implements ProductDao  {
                 "t.description ," +
                 "t.created_date , " +
                 "t.last_modified_date " +
-                "from mall.tproduct t " ;
+                "from mall.tproduct t " +
+                " WHERE 1 = 1";
 
         Map<String, Object> map = new HashMap<>();
+
+        if (productQueryParms.getProductCategory() != null){
+            sql = sql + " AND category = :category";
+            map.put("category",productQueryParms.getProductCategory().name());
+            //這樣資料庫就會固定存 FOOD、BOOK、CAR，
+            //而不會因為未來 enum 改寫 toString() 而變成中文或其他描述。
+            //name() >> 會呈現英文
+            //toString >> 如果enums有override to_string 則會是中文
+
+        }
+
+        if (productQueryParms.getSearch()  != null){
+            sql = sql + " AND product_name like :search";
+            map.put("search", "%"+productQueryParms.getSearch()+"%"); //like 的% 只能放在map內
+        }
+
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
         if (productList.size() > 0){
