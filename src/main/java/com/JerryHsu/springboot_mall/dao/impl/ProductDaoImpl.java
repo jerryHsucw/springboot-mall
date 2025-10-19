@@ -56,6 +56,10 @@ public class ProductDaoImpl implements ProductDao  {
         //用串的方式 指定排序功能，因為controller有default的關係，所以可以直接串
         sql = sql + " ORDER BY " + productQueryParms.getOrderBy() + " " + productQueryParms.getSort();
 
+        sql = sql + " limit :limit OFFSET :offset";
+        map.put("limit",productQueryParms.getLimit());
+        map.put("offset",productQueryParms.getOffset());
+
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
         if (productList.size() > 0){
