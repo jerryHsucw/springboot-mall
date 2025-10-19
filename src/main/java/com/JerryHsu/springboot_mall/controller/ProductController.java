@@ -34,7 +34,27 @@ public class ProductController {
         //透過key value在反查一次該key value對應的資料
         Product product = productService.getProductById(productId);
 
-        //會傳給前端有新增厚查詢的結果
+        //會傳給前端有新增後查詢的結果
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
+
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
+                                                 @RequestBody @Valid ProductRequest productRequest){
+
+        //檢查productId是否存在
+        Product queryProduct = productService.getProductById(productId);
+        if (queryProduct == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        //更新資料
+        productService.updateProduct(productId, productRequest);
+
+        Product updatedProdect = productService.getProductById(productId);
+        //會傳給前端有新增後查詢的結果
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProdect);
+
+    }
+
+
 }

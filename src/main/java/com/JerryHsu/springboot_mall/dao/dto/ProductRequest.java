@@ -1,6 +1,7 @@
 package com.JerryHsu.springboot_mall.dao.dto;
 
 import com.JerryHsu.springboot_mall.constant.ProductCategory;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -8,7 +9,7 @@ import lombok.Data;
 @Data
 public class ProductRequest {
 
-    @NotNull
+    @NotBlank
     private String productName;
 
     @NotNull
