@@ -3,8 +3,11 @@ package com.JerryHsu.springboot_mall.service;
 import com.JerryHsu.springboot_mall.dao.dto.ProductRequest;
 import com.JerryHsu.springboot_mall.model.Product;
 import jakarta.validation.Valid;
+import java.util.List;
 
 public interface ProductService {
+
+    List<Product> getProducts();
 
     Product getProductById(Integer productId);
 
@@ -13,4 +16,5 @@ public interface ProductService {
     void updateProduct(Integer productId, @Valid ProductRequest productRequest);
 
     void deleteProduct(Integer productId);
+
 }
