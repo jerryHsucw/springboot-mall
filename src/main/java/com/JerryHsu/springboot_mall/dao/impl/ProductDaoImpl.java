@@ -27,15 +27,15 @@ public class ProductDaoImpl implements ProductDao  {
     @Override
     public List<Product> getProducts(ProductQueryParms productQueryParms) {
         String sql = "select t.product_id , " +
-                "t.product_name , " +
-                "t.category , " +
-                "t.image_url , " +
-                "t.price ," +
-                "t.stock ," +
-                "t.description ," +
-                "t.created_date , " +
-                "t.last_modified_date " +
-                "from mall.tproduct t " +
+                " t.product_name , " +
+                " t.category , " +
+                " t.image_url , " +
+                " t.price ," +
+                " t.stock ," +
+                " t.description ," +
+                " t.created_date , " +
+                " t.last_modified_date " +
+                " FROM mall.tproduct t " +
                 " WHERE 1 = 1";
 
         Map<String, Object> map = new HashMap<>();
@@ -54,6 +54,7 @@ public class ProductDaoImpl implements ProductDao  {
             map.put("search", "%"+productQueryParms.getSearch()+"%"); //like 的% 只能放在map內
         }
         //用串的方式 指定排序功能，因為controller有default的關係，所以可以直接串
+        //補充：因為order by 與 sort 是 SQL結構，而不是值，避免sql Injection ex.orderBy = "price; DROP TABLE product; --"
         sql = sql + " ORDER BY " + productQueryParms.getOrderBy() + " " + productQueryParms.getSort();
 
         sql = sql + " limit :limit OFFSET :offset";
@@ -68,6 +69,28 @@ public class ProductDaoImpl implements ProductDao  {
         else{
             return null;
         }
+    }
+
+    @Override
+    public Integer countProduct(ProductQueryParms productQueryParms) {
+        String sql = " select count(*)  FROM mall.tproduct t WHERE 1 = 1";
+
+        Map<String, Object> map = new HashMap<>();
+
+        if (productQueryParms.getProductCategory() != null){
+            sql = sql + " AND category = :category";
+            map.put("category",productQueryParms.getProductCategory().name());
+        }
+
+        if (productQueryParms.getSearch()  != null){
+            sql = sql + " AND product_name like :search";
+            map.put("search", "%"+productQueryParms.getSearch()+"%"); //like 的% 只能放在map內
+        }
+        sql = sql + " ORDER BY " + productQueryParms.getOrderBy() + " " + productQueryParms.getSort();
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        return total;
     }
 
     @Override

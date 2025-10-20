@@ -5,6 +5,7 @@ import com.JerryHsu.springboot_mall.dao.dto.ProductQueryParms;
 import com.JerryHsu.springboot_mall.dao.dto.ProductRequest;
 import com.JerryHsu.springboot_mall.model.Product;
 import com.JerryHsu.springboot_mall.service.ProductService;
+import com.JerryHsu.springboot_mall.util.Page;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -23,7 +24,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products")//對於RESTful API的Mapping說明，可以再參考4-11 / 4-7@RequestParam
-    public ResponseEntity<List<Product>> getProducts(
+    public ResponseEntity<Page<Product>> getProducts(
             //查詢條件 Filtering
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search,
@@ -42,9 +43,17 @@ public class ProductController {
         productQueryParms.setLimit(limit);
         productQueryParms.setOffset(offset);
 
-        List<Product> productsList =  productService.getProducts(productQueryParms);
+        List<Product> productsList = productService.getProducts(productQueryParms);
 
-        return ResponseEntity.status(HttpStatus.OK).body(productsList);
+        Integer total = productService.countProduct(productQueryParms);
+
+        Page<Product> page = new Page<>();
+        page.setLimit(limit);
+        page.setOffset(offset);
+        page.setTotal(total);
+        page.setResult(productsList);
+
+        return ResponseEntity.status(HttpStatus.OK).body(page);
 
     }
 
