@@ -40,19 +40,8 @@ public class ProductDaoImpl implements ProductDao  {
 
         Map<String, Object> map = new HashMap<>();
 
-        if (productQueryParms.getProductCategory() != null){
-            sql = sql + " AND category = :category";
-            map.put("category",productQueryParms.getProductCategory().name());
-            //這樣資料庫就會固定存 FOOD、BOOK、CAR，
-            //而不會因為未來 enum 改寫 toString() 而變成中文或其他描述。
-            //name() >> 會呈現英文
-            //toString >> 如果enums有override to_string 則會是中文
-        }
+        sql = addFilteringSql(sql,map,productQueryParms);
 
-        if (productQueryParms.getSearch()  != null){
-            sql = sql + " AND product_name like :search";
-            map.put("search", "%"+productQueryParms.getSearch()+"%"); //like 的% 只能放在map內
-        }
         //用串的方式 指定排序功能，因為controller有default的關係，所以可以直接串
         //補充：因為order by 與 sort 是 SQL結構，而不是值，避免sql Injection ex.orderBy = "price; DROP TABLE product; --"
         sql = sql + " ORDER BY " + productQueryParms.getOrderBy() + " " + productQueryParms.getSort();
@@ -77,16 +66,7 @@ public class ProductDaoImpl implements ProductDao  {
 
         Map<String, Object> map = new HashMap<>();
 
-        if (productQueryParms.getProductCategory() != null){
-            sql = sql + " AND category = :category";
-            map.put("category",productQueryParms.getProductCategory().name());
-        }
-
-        if (productQueryParms.getSearch()  != null){
-            sql = sql + " AND product_name like :search";
-            map.put("search", "%"+productQueryParms.getSearch()+"%"); //like 的% 只能放在map內
-        }
-        sql = sql + " ORDER BY " + productQueryParms.getOrderBy() + " " + productQueryParms.getSort();
+        sql = addFilteringSql(sql,map,productQueryParms);
 
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
 
@@ -205,4 +185,26 @@ public class ProductDaoImpl implements ProductDao  {
         namedParameterJdbcTemplate.update(sql,map);
 
     }
+
+    //private 只有這個class 才可以使用這個方法
+    //public  非這個class 也可以使用這個方法
+    private String addFilteringSql(String sql , Map<String,Object> map, ProductQueryParms productQueryParms){
+
+        if (productQueryParms.getProductCategory() != null){
+            sql = sql + " AND category = :category";
+            map.put("category",productQueryParms.getProductCategory().name());
+            //這樣資料庫就會固定存 FOOD、BOOK、CAR，
+            //而不會因為未來 enum 改寫 toString() 而變成中文或其他描述。
+            //name() >> 會呈現英文
+            //toString >> 如果enums有override to_string 則會是中文
+        }
+
+        if (productQueryParms.getSearch()  != null){
+            sql = sql + " AND product_name like :search";
+            map.put("search", "%"+productQueryParms.getSearch()+"%"); //like 的% 只能放在map內
+        }
+
+        return sql;
+    }
 }
+
