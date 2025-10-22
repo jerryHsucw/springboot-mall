@@ -1,5 +1,6 @@
 package com.JerryHsu.springboot_mall.controller;
 
+import com.JerryHsu.springboot_mall.dao.dto.UserLoginRequest;
 import com.JerryHsu.springboot_mall.dao.dto.UserRegisterRequest;
 import com.JerryHsu.springboot_mall.model.User;
 import com.JerryHsu.springboot_mall.service.UserService;
@@ -17,18 +18,19 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/user/register")
+    @PostMapping("/users/register")
     public ResponseEntity<User> register(@RequestBody @Valid UserRegisterRequest userRegisterRequest){
 
         Integer userId = userService.createUser(userRegisterRequest);
-
-
-
         User user = userService.getUserById(userId);
-
-
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+    @PostMapping("/users/login")
+    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest){
 
+        User user = userService.login(userLoginRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
 
     }
 
