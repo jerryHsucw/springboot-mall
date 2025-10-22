@@ -45,6 +45,28 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public User getUserEmail(String email) {
+        String sql = " SELECT user_id, " +
+                "        email, " +
+                "        password," +
+                "        created_date," +
+                "        last_modified_date" +
+                "   FROM mall.tuser " +
+                "  WHERE email = :email";
+
+        Map<String , Object> map = new HashMap<>();
+        map.put("email",email);
+
+        List<User> userList = namedParameterJdbcTemplate.query(sql, map, new UserRowsMapper());
+
+        if (userList.size() > 0){
+            return userList.get(0);
+        }else{
+            return null;
+        }
+    }
+
+    @Override
     public User getUserById(Integer userId) {
 
         String sql = " SELECT user_id, " +
@@ -65,5 +87,8 @@ public class UserDaoImpl implements UserDao {
         }else{
             return null;
         }
+
+
+
     }
 }
