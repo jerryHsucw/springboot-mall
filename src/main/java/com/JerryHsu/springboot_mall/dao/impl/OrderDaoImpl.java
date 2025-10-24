@@ -2,7 +2,10 @@ package com.JerryHsu.springboot_mall.dao.impl;
 
 import com.JerryHsu.springboot_mall.dao.OrderDao;
 import com.JerryHsu.springboot_mall.dao.dto.CreateOrderRequest;
+import com.JerryHsu.springboot_mall.model.Order;
 import com.JerryHsu.springboot_mall.model.OrderItem;
+import com.JerryHsu.springboot_mall.rowmapper.OrderItemRowMapper;
+import com.JerryHsu.springboot_mall.rowmapper.OrderRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -100,5 +103,44 @@ public class OrderDaoImpl implements OrderDao {
             parameterSources[i].addValue("amount",orderItem.getAmount());
         }
         namedParameterJdbcTemplate.batchUpdate(sql,parameterSources);
+    }
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+        String sql = " SELECT order_id, user_id, total_amount, created_date, last_modified_date " +
+                     "   FROM torder WHERE order_id = :orderId";
+
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("orderId",orderId);
+
+        List<Order> orderList= namedParameterJdbcTemplate.query(sql,map, new OrderRowMapper());
+
+        if (orderList.size() > 0) {
+            return orderList.get(0);
+        }else{
+            return null;
+        }
+    }
+
+    @Override
+    public List<OrderItem> getOrderItemsById(Integer orderId) {
+        String sql = "SELECT o1.order_item_id," +
+                "   o1.order_id," +
+                "   o1.product_id," +
+                "   o1.quantity," +
+                "   o1.amount," +
+                "   t.product_name," +
+                "   t.image_url " +
+                "  FROM torder_item o1" +
+                "  JOIN tproduct t ON o1.product_id = t.product_id " +
+                " WHERE o1.order_id = :orderId";
+        Map<String,Object> map = new HashMap<>();
+
+        map.put("orderId",orderId);
+
+        List<OrderItem> orderList = namedParameterJdbcTemplate.query(sql,map, new OrderItemRowMapper());
+
+        return orderList;
     }
 }
