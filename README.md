@@ -40,9 +40,9 @@ springboot-mall/
 │ └── test/
 │ └── java/com/example/mall/
 └── pom.xml
----
-## 💡 主要功能
 
+---
+主要功能
 - 🛍 商品查詢 / 建立 / 修改 / 刪除  
 - 👤 使用者註冊、登入  
 - 🛒 購物車功能  
@@ -51,7 +51,7 @@ springboot-mall/
 
 ---
 
-## ⚙️ 環境設定
+環境設定
 
 1. 安裝 **Java 17** 以上版本  
 2. 安裝 **Maven**  
@@ -85,6 +85,9 @@ json
     { "productId": 10, "quantity": 2 }
   ]
 }
-📘 課程參考來源
+
+...等
+
+參考來源：
 此專案為 Hahow 線上課程 - Spring Boot 後端開發實戰，
 目的在於練習後端系統開發、資料庫操作、RESTful API 設計與分層架構。
